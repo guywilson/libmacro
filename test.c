@@ -1,12 +1,11 @@
 #include <stdio.h>
 #include <libmacro.h>
 
-int main(void)
+int main(int argc, char ** argv)
 {
     HTXT    ht;
-    int     isFound;
 
-    ht = lm_open("test.txt", "out.txt");
+    ht = lm_openWithStdArgs(argc, argv);
 
     while (!lm_isEOF(ht)) {
         lm_findReplace(ht, "fox", "dog");

@@ -30,6 +30,46 @@ struct _textHandle {
     uint32_t        errorCode;
 };
 
+void lm_printStdUsage(char * pszProgramName)
+{
+    printf("Usage:\n\n");
+    printf("%s <options> input-file\n", pszProgramName);
+    printf("\t-o <output file>\n");
+    printf("\t-h print help\n\n");
+}
+
+HTXT lm_openWithStdArgs(int argc, char ** argv)
+{
+    char *          pszInputFile = NULL;
+    char *          pszOutputFile = NULL;
+
+    if (argc > 1) {
+        pszInputFile = strdup(&argv[argc - 1][0]);
+
+        for (int i = 1;i < (argc - 1);i++) {
+            if (argv[i][0] == '-') {
+                if (argv[i][1] == 'o') {
+                    pszOutputFile = strdup(&argv[i+1][0]);
+                }
+                else if (argv[i][1] == 'h') {
+                    lm_printStdUsage(&argv[0][0]);
+                    exit(0);
+                }
+            }
+        }
+    }
+    else {
+        lm_printStdUsage(&argv[0][0]);
+        exit(-1);
+    }
+
+    if (pszInputFile == NULL) {
+        fprintf(stderr, "FATAL ERROR: No input file specified\n");
+        exit(-1);
+    }
+    
+    return lm_open(pszInputFile, pszOutputFile);
+}
 
 HTXT lm_open(const char * pszSourceFilename, const char * pszTargetFilename)
 {

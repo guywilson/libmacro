@@ -4,6 +4,8 @@
 struct _textHandle;
 typedef struct _textHandle *     HTXT;
 
+void lm_printStdUsage(char * pszProgramName);
+HTXT lm_openWithStdArgs(int argc, char ** argv);
 HTXT lm_open(const char * pszSourceFilename, const char * pszTargetFilename);
 void lm_close(HTXT htxt);
 int lm_isEOF(HTXT htxt);
