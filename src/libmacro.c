@@ -113,8 +113,6 @@ void lm_close(HTXT htxt)
     fclose(htxt->fptrTarget);
     fclose(htxt->fptrSource);
 
-    free(htxt->pszOutputText);
-
     if (htxt->pszErrorString != NULL) {
         free(htxt->pszErrorString);
     }
