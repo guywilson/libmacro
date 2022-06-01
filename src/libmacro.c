@@ -23,8 +23,6 @@ const char * pszERR_UNKNOWN_ERROR_CODE =        "Unknown error code 0x%08X";
 struct _textHandle {
     FILE *          fptrSource;
     FILE *          fptrTarget;
-
-    char *          pszOutputText;
     
     char *          pszErrorString;
     uint32_t        errorCode;
