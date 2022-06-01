@@ -14,6 +14,7 @@ LIB = lib
 
 # What is our target
 TARGET = libmacro.so
+TEST = test
 
 # Tools
 C = gcc-11
@@ -36,13 +37,20 @@ CSRCFILES = $(wildcard $(SOURCE)/*.c)
 OBJFILES = $(patsubst $(SOURCE)/%.c, $(BUILD)/%.o, $(CSRCFILES))
 DEPFILES = $(patsubst $(SOURCE)/%.c, $(DEP)/%.d, $(CSRCFILES))
 
-all: $(TARGET)
+all: $(TARGET) $(TEST)
 
 # Compile C/C++ source files
 #
 $(TARGET): $(OBJFILES)
 	$(PRELINK)
 	$(LINKER) -shared -o $(LIB)/$(TARGET) $^
+
+$(TEST): $(BUILD)/test.o $(TARGET)
+	$(LINKER) -L$${HOME}/lib -lmacro -o $@ $< 
+
+$(BUILD)/test.o: test.c
+	$(PRECOMPILE)
+	$(C) $(CFLAGS) -I$${HOME}/include -o $@ $<
 
 $(BUILD)/%.o: $(SOURCE)/%.c
 $(BUILD)/%.o: $(SOURCE)/%.c $(DEP)/%.d
