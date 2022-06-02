@@ -65,6 +65,10 @@ HTXT lm_openWithStdArgs(int argc, char ** argv)
         fprintf(stderr, "FATAL ERROR: No input file specified\n");
         exit(-1);
     }
+    if (pszOutputFile == NULL) {
+        fprintf(stderr, "FATAL ERROR: No output file specified\n");
+        exit(-1);
+    }
     
     return lm_open(pszInputFile, pszOutputFile);
 }
@@ -142,7 +146,7 @@ char * lm_getLastError(HTXT htxt)
     return pszCopy;
 }
 
-int lm_find(HTXT htxt, const char * pszFindStr)
+int _find(HTXT htxt, const char * pszFindStr, int writeOutput)
 {
     char        szBuffer[LIBMACRO_MAX_SEARCH_LENGTH + 1];
     size_t      bufferLength;
@@ -158,8 +162,8 @@ int lm_find(HTXT htxt, const char * pszFindStr)
     /*
     ** Read a block bufferLength bytes long at position n, 
     ** see if our 'window' is our search string. If not, rewind 
-    ** the file pointer to shift our 'window' on 1 byte and read 
-    ** the next block... 
+    ** the file pointer by (bufferLength - 1) to shift our 
+    ** 'window' on 1 byte and read the next block... 
     */
     while (!isFound) {
         bytesRead = fread(szBuffer, 1, bufferLength, htxt->fptrSource);
@@ -172,9 +176,14 @@ int lm_find(HTXT htxt, const char * pszFindStr)
         isFound = (strncmp(szBuffer, pszFindStr, bufferLength) == 0 ? 1 : 0);
 
         if (!isFound) {
-            fputc(szBuffer[0], htxt->fptrTarget);
+            if (writeOutput) {
+                fputc(szBuffer[0], htxt->fptrTarget);
+            }
 
-            // Rewind the file pointer...
+            /*
+            ** Rewind the file pointer to shift our window on
+            ** by 1 byte...
+            */
             fseek(htxt->fptrSource, -(bytesRead - 1), SEEK_CUR);
         }
     }
@@ -184,11 +193,16 @@ int lm_find(HTXT htxt, const char * pszFindStr)
     return 1;
 }
 
+int lm_find(HTXT htxt, const char * pszFindStr)
+{
+    return _find(htxt, pszFindStr, 1);
+}
+
 int lm_findReplace(HTXT htxt, const char * pszFindStr, const char * pszReplaceStr)
 {
     int         isFound;
 
-    isFound = lm_find(htxt, pszFindStr);
+    isFound = _find(htxt, pszFindStr, 1);
 
     if (isFound) {
         fseek(htxt->fptrSource, strlen(pszFindStr), SEEK_CUR);
@@ -202,11 +216,20 @@ int lm_findDeleteNum(HTXT htxt, const char * pszFindStr, long numChars)
 {
     int         isFound;
 
-    isFound = lm_find(htxt, pszFindStr);
+    isFound = _find(htxt, pszFindStr, 1);
 
     if (isFound) {
         fseek(htxt->fptrSource, numChars, SEEK_CUR);
     }
+
+    return isFound;    
+}
+
+int lm_findDeleteToFound(HTXT htxt, const char * pszFindStr)
+{
+    int         isFound;
+
+    isFound = _find(htxt, pszFindStr, 0);
 
     return isFound;    
 }
@@ -216,7 +239,7 @@ int lm_findDeleteLineEnd(HTXT htxt, const char * pszFindStr)
     int         isFound;
     int         c;
 
-    isFound = lm_find(htxt, pszFindStr);
+    isFound = _find(htxt, pszFindStr, 1);
 
     if (isFound) {
         c = fgetc(htxt->fptrSource);
@@ -233,7 +256,7 @@ int lm_findDeleteFileEnd(HTXT htxt, const char * pszFindStr)
 {
     int         isFound;
 
-    isFound = lm_find(htxt, pszFindStr);
+    isFound = _find(htxt, pszFindStr, 1);
 
     if (isFound) {
         fseek(htxt->fptrSource, 0L, SEEK_END);
@@ -246,7 +269,7 @@ int lm_findMoveNum(HTXT htxt, const char * pszFindStr, long numChars)
 {
     int         isFound;
 
-    isFound = lm_find(htxt, pszFindStr);
+    isFound = _find(htxt, pszFindStr, 1);
 
     if (isFound) {
         fseek(htxt->fptrSource, numChars, SEEK_CUR);
@@ -260,7 +283,7 @@ int lm_findMoveLineEnd(HTXT htxt, const char * pszFindStr)
     int         isFound;
     int         c;
 
-    isFound = lm_find(htxt, pszFindStr);
+    isFound = _find(htxt, pszFindStr, 1);
 
     if (isFound) {
         c = fgetc(htxt->fptrSource);
@@ -277,7 +300,7 @@ int lm_findMoveFileEnd(HTXT htxt, const char * pszFindStr)
 {
     int         isFound;
 
-    isFound = lm_find(htxt, pszFindStr);
+    isFound = _find(htxt, pszFindStr, 1);
 
     if (isFound) {
         fseek(htxt->fptrSource, 0L, SEEK_END);

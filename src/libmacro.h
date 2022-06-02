@@ -14,6 +14,7 @@ char * lm_getLastError(HTXT htxt);
 int lm_find(HTXT htxt, const char * pszFindStr);
 int lm_findReplace(HTXT htxt, const char * pszFindStr, const char * pszReplaceStr);
 int lm_findDeleteNum(HTXT htxt, const char * pszFindStr, long numChars);
+int lm_findDeleteToFound(HTXT htxt, const char * pszFindStr);
 int lm_findDeleteLineEnd(HTXT htxt, const char * pszFindStr);
 int lm_findDeleteFileEnd(HTXT htxt, const char * pszFindStr);
 int lm_findMoveNum(HTXT htxt, const char * pszFindStr, long numChars);
