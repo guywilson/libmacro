@@ -1,0 +1,10 @@
+#!/bin/bash
+
+filename=$1
+
+echo $filename
+echo "${filename%.*}".o
+echo "${filename%.*}"
+
+gcc-11 -c -Wall -pedantic -O2 -o "${filename%.*}.o" filename
+#gcc-11 -o "${filename%.*}" "${filename%.*}".o -lm

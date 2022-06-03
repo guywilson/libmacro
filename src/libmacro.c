@@ -232,6 +232,19 @@ HTXT lm_open(const char * pszSourceFilename, const char * pszTargetFilename)
     return htxt;
 }
 
+/******************************************************************************
+**
+** Name: lm_close
+**
+** Description:
+** Close both input and output files, and free the handle
+**
+** Arguments:
+**      htxt                - The handle
+**
+** Returns: void
+**
+******************************************************************************/
 void lm_close(HTXT htxt)
 {
     fflush(htxt->fptrTarget);
