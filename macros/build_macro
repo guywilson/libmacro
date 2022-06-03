@@ -1,10 +1,12 @@
 #!/bin/bash
 
 filename=$1
+objectfile="${filename%.*}".o
+executable="${filename%.*}"
 
 echo $filename
 echo "${filename%.*}".o
 echo "${filename%.*}"
 
-gcc-11 -c -Wall -pedantic -O2 -o "${filename%.*}.o" filename
-#gcc-11 -o "${filename%.*}" "${filename%.*}".o -lm
+gcc-11 -c -Wall -pedantic -O2 -o $objectfile $filename
+gcc-11 -L/Users/guy/lib -o $executable $objectfile -lmacro
