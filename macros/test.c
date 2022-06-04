@@ -3,12 +3,12 @@
 
 int main(int argc, char ** argv)
 {
-    HTXT    ht;
-    HTXT    ht2;
+    HTXTFILE    ht;
+    HTXTFILE    ht2;
 
     ht = lm_openWithStdArgs(argc, argv);
 
-    while (!lm_isEOF(ht)) {
+    lm_repeat(ht) {
         lm_findReplace(ht, "fox", "dog");
         lm_findReplace(ht, "dog", "fox");
     }
@@ -17,7 +17,7 @@ int main(int argc, char ** argv)
 
     ht2 = lm_open("email.txt", "email_out.txt");
 
-    while (!lm_isEOF(ht2)) {
+    lm_repeat(ht2) {
         lm_findDeleteToFound(ht2, "<");
         lm_findDeleteNum(ht2, "<", 1);
         lm_findReplace(ht2, ">;", ",\n");

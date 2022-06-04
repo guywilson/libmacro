@@ -143,7 +143,7 @@ void lm_printStdUsage(char * pszProgramName)
 ** Returns: A handle that is passed to all other lm_ library functions
 **
 ******************************************************************************/
-HTXT lm_openWithStdArgs(int argc, char ** argv)
+HTXTFILE lm_openWithStdArgs(int argc, char ** argv)
 {
     char *          pszInputFile = NULL;
     char *          pszOutputFile = NULL;
@@ -185,7 +185,7 @@ HTXT lm_openWithStdArgs(int argc, char ** argv)
 ** Name: lm_open
 **
 ** Description:
-** Opens the input and output text files and initialises the HTXT handle
+** Opens the input and output text files and initialises the HTXTFILE handle
 **
 ** Arguments:
 **      pszSourceFilename   - The input file name to open
@@ -194,11 +194,11 @@ HTXT lm_openWithStdArgs(int argc, char ** argv)
 ** Returns: A handle that is passed to all other lm_ library functions
 **
 ******************************************************************************/
-HTXT lm_open(const char * pszSourceFilename, const char * pszTargetFilename)
+HTXTFILE lm_open(const char * pszSourceFilename, const char * pszTargetFilename)
 {
-    HTXT        htxt;
+    HTXTFILE        htxt;
 
-    htxt = (HTXT)malloc(sizeof(struct _textHandle));
+    htxt = (HTXTFILE)malloc(sizeof(struct _textHandle));
 
     if (htxt == NULL) {
         fprintf(stderr, "FATAL ERROR: Failed to allocate memory for handle\n");
@@ -245,7 +245,7 @@ HTXT lm_open(const char * pszSourceFilename, const char * pszTargetFilename)
 ** Returns: void
 **
 ******************************************************************************/
-void lm_close(HTXT htxt)
+void lm_close(HTXTFILE htxt)
 {
     fflush(htxt->fptrTarget);
     fclose(htxt->fptrTarget);
@@ -258,17 +258,17 @@ void lm_close(HTXT htxt)
     free(htxt);
 }
 
-int lm_isEOF(HTXT htxt)
+int lm_isEOF(HTXTFILE htxt)
 {
     return (feof(htxt->fptrSource) != 0 ? 1 : 0);
 }
 
-void lm_rewind(HTXT htxt)
+void lm_rewind(HTXTFILE htxt)
 {
     rewind(htxt->fptrSource);
 }
 
-char * lm_getLastError(HTXT htxt)
+char * lm_getLastError(HTXTFILE htxt)
 {
     char * pszCopy = NULL;
     
@@ -280,7 +280,7 @@ char * lm_getLastError(HTXT htxt)
     return pszCopy;
 }
 
-int _find(HTXT htxt, const char * pszFindStr, int writeOutput)
+int _find(HTXTFILE htxt, const char * pszFindStr, int writeOutput)
 {
     char        szBuffer[LIBMACRO_MAX_SEARCH_LENGTH + 1];
     size_t      bufferLength;
@@ -327,12 +327,12 @@ int _find(HTXT htxt, const char * pszFindStr, int writeOutput)
     return 1;
 }
 
-int lm_find(HTXT htxt, const char * pszFindStr)
+int lm_find(HTXTFILE htxt, const char * pszFindStr)
 {
     return _find(htxt, pszFindStr, 1);
 }
 
-int lm_findReplace(HTXT htxt, const char * pszFindStr, const char * pszReplaceStr)
+int lm_findReplace(HTXTFILE htxt, const char * pszFindStr, const char * pszReplaceStr)
 {
     int         isFound;
 
@@ -346,7 +346,7 @@ int lm_findReplace(HTXT htxt, const char * pszFindStr, const char * pszReplaceSt
     return isFound;    
 }
 
-int lm_findDeleteNum(HTXT htxt, const char * pszFindStr, long numChars)
+int lm_findDeleteNum(HTXTFILE htxt, const char * pszFindStr, long numChars)
 {
     int         isFound;
 
@@ -359,7 +359,7 @@ int lm_findDeleteNum(HTXT htxt, const char * pszFindStr, long numChars)
     return isFound;    
 }
 
-int lm_findDeleteToFound(HTXT htxt, const char * pszFindStr)
+int lm_findDeleteToFound(HTXTFILE htxt, const char * pszFindStr)
 {
     int         isFound;
 
@@ -368,7 +368,7 @@ int lm_findDeleteToFound(HTXT htxt, const char * pszFindStr)
     return isFound;    
 }
 
-int lm_findDeleteLineEnd(HTXT htxt, const char * pszFindStr)
+int lm_findDeleteLineEnd(HTXTFILE htxt, const char * pszFindStr)
 {
     int         isFound;
     int         c;
@@ -386,7 +386,7 @@ int lm_findDeleteLineEnd(HTXT htxt, const char * pszFindStr)
     return isFound;    
 }
 
-int lm_findDeleteFileEnd(HTXT htxt, const char * pszFindStr)
+int lm_findDeleteFileEnd(HTXTFILE htxt, const char * pszFindStr)
 {
     int         isFound;
 
@@ -399,7 +399,7 @@ int lm_findDeleteFileEnd(HTXT htxt, const char * pszFindStr)
     return isFound;    
 }
 
-int lm_findMoveNum(HTXT htxt, const char * pszFindStr, long numChars)
+int lm_findMoveNum(HTXTFILE htxt, const char * pszFindStr, long numChars)
 {
     int         isFound;
 
@@ -412,7 +412,7 @@ int lm_findMoveNum(HTXT htxt, const char * pszFindStr, long numChars)
     return isFound;    
 }
 
-int lm_findMoveLineEnd(HTXT htxt, const char * pszFindStr)
+int lm_findMoveLineEnd(HTXTFILE htxt, const char * pszFindStr)
 {
     int         isFound;
     int         c;
@@ -430,7 +430,7 @@ int lm_findMoveLineEnd(HTXT htxt, const char * pszFindStr)
     return isFound;    
 }
 
-int lm_findMoveFileEnd(HTXT htxt, const char * pszFindStr)
+int lm_findMoveFileEnd(HTXTFILE htxt, const char * pszFindStr)
 {
     int         isFound;
 
